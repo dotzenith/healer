@@ -1,9 +1,0 @@
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
-  <ShortName>Link Cleaner</ShortName>
-  <Description>Clean a URL with Link Cleaner</Description>
-  <InputEncoding>UTF-8</InputEncoding>
-  <Image width="48" height="48" type="image/x-icon">https://linkcleaner.app/favicon.ico</Image>
-  <Url type="text/html" method="get" template="https://linkcleaner.app/?url={searchTerms}&amp;utm_source=OpenSearch" />
-  <moz:SearchForm>https://linkcleaner.app/</moz:SearchForm>
-  <Url type="application/opensearchdescription+xml" rel="self" template="https://linkcleaner.app/opensearch.xml" />
-</OpenSearchDescription>
