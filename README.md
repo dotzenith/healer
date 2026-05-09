@@ -2,6 +2,10 @@
 
 A CLI tool that removes tracking parameters and junk from URLs. Based on [Link Cleaner](https://github.com/corbindavenport/link-cleaner) by Corbin Davenport.
 
+I liked the original project but it did not have a CLI that I could just use with my hotkey daemon.
+So I used Kimi 2.6 to rewrite this as a rust CLI tool, so keep that in mind if you try to use this yourself.
+This is not like any of my other work where I've hand-written (bad) code, so don't blame me for bugs.
+
 ## Build
 
 ```sh

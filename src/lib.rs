@@ -96,16 +96,14 @@ pub fn clean_link(link: &str, settings: &Settings) -> Result<String, String> {
     if let Some(q) = params.get("q") {
         new_link.query_pairs_mut().append_pair("q", q);
     }
-    if host == "play.google.com" {
-        if let Some(id) = params.get("id") {
+    if host == "play.google.com"
+        && let Some(id) = params.get("id") {
             new_link.query_pairs_mut().append_pair("id", id);
         }
-    }
-    if host == "www.macys.com" {
-        if let Some(id) = params.get("ID") {
+    if host == "www.macys.com"
+        && let Some(id) = params.get("ID") {
             new_link.query_pairs_mut().append_pair("ID", id);
         }
-    }
 
     // ------------------------------------------------------------------
     // 5. YouTube handling (must be checked before generic preserving)
@@ -131,11 +129,10 @@ pub fn clean_link(link: &str, settings: &Settings) -> Result<String, String> {
         if let Some(list) = params.get("list") {
             new_link.query_pairs_mut().append_pair("list", list);
         }
-    } else if is_youtu_be && params.contains_key("t") {
-        if let Some(t) = params.get("t") {
+    } else if is_youtu_be && params.contains_key("t")
+        && let Some(t) = params.get("t") {
             new_link.query_pairs_mut().append_pair("t", t);
         }
-    }
 
     // ------------------------------------------------------------------
     // 6. Other site-specific preserved parameters / path mutations
@@ -163,33 +160,29 @@ pub fn clean_link(link: &str, settings: &Settings) -> Result<String, String> {
         }
 
         let re = Regex::new(r"(?:/dp/|/product/|/d/)(\w+|\d+)").unwrap();
-        if let Some(caps) = re.captures(old_link.path()) {
-            if let Some(pid) = caps.get(1) {
+        if let Some(caps) = re.captures(old_link.path())
+            && let Some(pid) = caps.get(1) {
                 new_link.set_path(&format!("/dp/{}", pid.as_str()));
             }
-        }
     }
 
-    if host == "www.lenovo.com" {
-        if let Some(bundle) = params.get("bundleId") {
+    if host == "www.lenovo.com"
+        && let Some(bundle) = params.get("bundleId") {
             new_link.query_pairs_mut().append_pair("bundleId", bundle);
         }
-    }
 
     if host == "www.bestbuy.com" && old_link.path().contains(".p") {
         let re = Regex::new(r"/(\d+)\.p").unwrap();
-        if let Some(caps) = re.captures(old_link.path()) {
-            if let Some(pid) = caps.get(1) {
+        if let Some(caps) = re.captures(old_link.path())
+            && let Some(pid) = caps.get(1) {
                 new_link.set_path(&format!("/site/{}.p", pid.as_str()));
             }
-        }
     }
 
-    if host == "www.xiaohongshu.com" {
-        if let Some(token) = params.get("xsec_token") {
+    if host == "www.xiaohongshu.com"
+        && let Some(token) = params.get("xsec_token") {
             new_link.query_pairs_mut().append_pair("xsec_token", token);
         }
-    }
 
     if host == "weatherkit.apple.com" {
         for key in ["lang", "party", "ids"] {
@@ -227,21 +220,19 @@ pub fn clean_link(link: &str, settings: &Settings) -> Result<String, String> {
 
     if settings.walmart_shorten && new_host == "www.walmart.com" && old_link.path().contains("/ip/") {
         let re = Regex::new(r"/ip/.*/(\d+)").unwrap();
-        if let Some(caps) = re.captures(old_link.path()) {
-            if let Some(pid) = caps.get(1) {
+        if let Some(caps) = re.captures(old_link.path())
+            && let Some(pid) = caps.get(1) {
                 new_link.set_path(&format!("/ip/{}", pid.as_str()));
             }
-        }
     }
 
     // ------------------------------------------------------------------
     // 8. Amazon affiliate tracking ID
     // ------------------------------------------------------------------
-    if is_amazon_host(&new_link.host_str().unwrap_or("").to_lowercase()) {
-        if let Some(ref tag) = settings.amazon_tracking_id {
+    if is_amazon_host(&new_link.host_str().unwrap_or("").to_lowercase())
+        && let Some(ref tag) = settings.amazon_tracking_id {
             new_link.query_pairs_mut().append_pair("tag", tag);
         }
-    }
 
     Ok(new_link.to_string())
 }
