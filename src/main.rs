@@ -1,14 +1,3 @@
-// healer - A CLI tool that removes tracking parameters and junk from URLs.
-// Copyright (C) 2024 healer contributors
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 use anyhow::{Context, Result};
 use arboard::Clipboard;
 use clap::Parser;
@@ -51,21 +40,15 @@ struct Cli {
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    // ------------------------------------------------------------------
-    // 1. Load config file (or default empty config)
-    // ------------------------------------------------------------------
     let config_path = cli
         .config
         .clone()
         .or_else(default_config_path)
-        .context("Could not determine config directory. Please specify --config.")?;
+        .context("could not determine config directory — use --config to specify one")?;
 
     let config = ConfigFile::load(&config_path)?;
     let mut settings = config.to_settings();
 
-    // ------------------------------------------------------------------
-    // 2. Override with CLI flags
-    // ------------------------------------------------------------------
     if cli.youtube_short {
         settings.youtube_shorten = true;
     }
@@ -76,35 +59,26 @@ fn main() -> Result<()> {
         settings.fix_bluesky = true;
     }
 
-    // ------------------------------------------------------------------
-    // 3. Verbose output (optional)
-    // ------------------------------------------------------------------
     if cli.verbose {
         eprintln!("Old link:    {}", cli.url);
         eprintln!("Settings:    {:?}", settings);
         eprintln!("Config file: {}", config_path.display());
     }
 
-    // ------------------------------------------------------------------
-    // 4. Clean the link
-    // ------------------------------------------------------------------
     let cleaned =
-        healer::clean_link(&cli.url, &settings).map_err(|e| anyhow::anyhow!("Failed to clean URL: {} - {}", cli.url, e))?;
+        healer::clean_link(&cli.url, &settings).with_context(|| format!("failed to clean URL: {}", cli.url))?;
 
     if cli.verbose {
-        eprintln!("New link:    {}", cleaned);
+        eprintln!("New link:    {cleaned}");
     }
 
-    // ------------------------------------------------------------------
-    // 5. Output
-    // ------------------------------------------------------------------
-    println!("{}", cleaned);
+    println!("{cleaned}");
 
     if cli.clipboard {
-        Clipboard::new()
-            .with_context(|| "Failed to access system clipboard.")?
+        let mut clipboard = Clipboard::new().context("failed to access system clipboard")?;
+        clipboard
             .set_text(&cleaned)
-            .with_context(|| "Failed to copy cleaned URL to clipboard.")?;
+            .context("failed to copy cleaned URL to clipboard")?;
         eprintln!("Copied to clipboard.");
     }
 
