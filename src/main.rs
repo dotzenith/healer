@@ -49,6 +49,8 @@ fn main() -> Result<()> {
     let config = ConfigFile::load(&config_path)?;
     let mut settings = config.to_settings();
 
+    let use_clipboard = cli.clipboard || config.clipboard.unwrap_or(false);
+
     if cli.youtube_short {
         settings.youtube_shorten = true;
     }
@@ -68,18 +70,14 @@ fn main() -> Result<()> {
     let cleaned =
         healer::clean_link(&cli.url, &settings).with_context(|| format!("failed to clean URL: {}", cli.url))?;
 
-    if cli.verbose {
-        eprintln!("New link:    {cleaned}");
-    }
-
-    println!("{cleaned}");
-
-    if cli.clipboard {
+    if use_clipboard {
         let mut clipboard = Clipboard::new().context("failed to access system clipboard")?;
         clipboard
             .set_text(&cleaned)
             .context("failed to copy cleaned URL to clipboard")?;
-        eprintln!("Copied to clipboard.");
+        println!("{cleaned} [Copied to clipboard]");
+    } else {
+        println!("{cleaned}");
     }
 
     Ok(())

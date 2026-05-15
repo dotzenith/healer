@@ -13,6 +13,8 @@ pub struct ConfigFile {
     pub fix_twitter: Option<bool>,
     #[serde(default)]
     pub fix_bluesky: Option<bool>,
+    #[serde(default)]
+    pub clipboard: Option<bool>,
 }
 
 impl ConfigFile {
