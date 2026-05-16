@@ -82,6 +82,7 @@ youtube_shorten = true
 fix_twitter = false
 fix_bluesky = false
 fix_instagram = false
+clipboard = true
 ```
 
 ## License
